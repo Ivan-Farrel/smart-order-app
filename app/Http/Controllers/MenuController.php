@@ -75,4 +75,32 @@ class MenuController extends Controller
     {
         return Inertia::render('Admin/QRGenerator');
     }
+
+    // Tambahkan di MenuController.php
+
+    public function update(Request $request, Product $product)
+    {
+        $validated = $request->validate([
+            'category_id' => 'required|exists:categories,id',
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ]);
+
+        // Jika ada upload foto baru
+        if ($request->hasFile('image')) {
+            // Hapus foto lama jika ada
+            if ($product->image) {
+                Storage::disk('public')->delete($product->image);
+            }
+            
+            $path = $request->file('image')->store('products', 'public');
+            $validated['image'] = $path;
+        }
+
+        $product->update($validated);
+
+        return back()->with('message', 'Menu berhasil diupdate, Lek!');
+    }
 }

@@ -40,8 +40,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['auth', 'verified'])->group(function () {
     // ... route yang sudah ada ...
     Route::get('/qr-generator', [MenuController::class, 'qrGenerator'])->name('qr.index');
+
+    Route::middleware(['auth', 'verified'])->group(function () {
+    // ... route lainnya
+    Route::post('/products/{product}', [MenuController::class, 'update'])->name('products.update');
 });
 });
 });
+});
+
 
 require __DIR__.'/auth.php';
